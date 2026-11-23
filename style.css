@@ -2677,3 +2677,93 @@ section {
   .envelope-seal  { top: 72.4%; width: 12.4cqw; height: 12.4cqw; }
   .seal-pattern   { font-size: 5.6cqw; }
 }
+
+/* =================================
+   分享婚禮喜帖
+================================= */
+
+.share-section {
+  padding: 75px 20px 85px;
+  text-align: center;
+  background: var(--cream);
+  color: var(--dark-brown);
+}
+
+.share-section h2 {
+  margin-bottom: 18px;
+  font-family: "Noto Serif TC", serif;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.share-description {
+  margin-bottom: 30px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--taupe);
+}
+
+.share-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.share-button,
+.copy-button {
+  min-width: 145px;
+  padding: 13px 23px;
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.share-button {
+  background: var(--brown);
+  color: var(--cream);
+  border: 1px solid var(--brown);
+}
+
+.copy-button {
+  background: transparent;
+  color: var(--brown);
+  border: 1px solid var(--brown);
+}
+
+.share-button:hover,
+.copy-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(72, 47, 43, 0.12);
+}
+
+.share-button span,
+.copy-button span {
+  margin-right: 7px;
+}
+
+.share-message {
+  min-height: 22px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--brown);
+}
+
+@media (max-width: 480px) {
+  .share-section {
+    padding: 60px 20px 70px;
+  }
+
+  .share-actions {
+    flex-direction: column;
+  }
+
+  .share-button,
+  .copy-button {
+    width: 190px;
+  }
+}

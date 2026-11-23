@@ -672,3 +672,100 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+/* =================================
+   09. 分享與複製婚禮喜帖
+================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const shareButton = document.getElementById("shareInvitation");
+  const copyButton = document.getElementById("copyInvitation");
+  const shareMessage = document.getElementById("shareMessage");
+
+  // 取得目前喜帖網址
+  const invitationUrl = window.location.href;
+
+  // 分享喜帖
+  if (shareButton) {
+
+    shareButton.addEventListener("click", async function () {
+
+      const shareData = {
+        title: document.title,
+        text: "誠摯邀請您參加我們的婚禮，一起分享這份幸福！",
+        url: invitationUrl
+      };
+
+      if (navigator.share) {
+
+        try {
+
+          await navigator.share(shareData);
+
+          if (shareMessage) {
+            shareMessage.textContent = "感謝您分享我們的喜帖 ♡";
+          }
+
+        } catch (error) {
+
+          // 使用者取消分享時，不顯示錯誤
+          if (error.name !== "AbortError" && shareMessage) {
+            shareMessage.textContent = "分享功能暫時無法使用，請改用複製網址。";
+          }
+
+        }
+
+      } else {
+
+        // 電腦瀏覽器不支援系統分享時
+        copyInvitationUrl();
+
+      }
+
+    });
+
+  }
+
+  // 複製網址
+  async function copyInvitationUrl() {
+
+    try {
+
+      await navigator.clipboard.writeText(invitationUrl);
+
+      if (shareMessage) {
+        shareMessage.textContent = "喜帖網址已複製，快分享給親友吧！♡";
+      }
+
+    } catch (error) {
+
+      // 備用複製方式
+      const textarea = document.createElement("textarea");
+
+      textarea.value = invitationUrl;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+
+      document.body.appendChild(textarea);
+
+      textarea.select();
+
+      const success = document.execCommand("copy");
+
+      textarea.remove();
+
+      if (shareMessage) {
+        shareMessage.textContent = success
+          ? "喜帖網址已複製，快分享給親友吧！♡"
+          : "複製失敗，請手動複製網址。";
+      }
+
+    }
+
+  }
+
+  if (copyButton) {
+    copyButton.addEventListener("click", copyInvitationUrl);
+  }
+
+});
