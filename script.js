@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     declineButton.addEventListener("click", function () {
 
-      if (dodgeCount >= 5) return;
+      if (dodgeCount >= 5) { openModal(declineModal); return; }
 
       dodgeCount++;
 
@@ -630,6 +630,7 @@ document.addEventListener("DOMContentLoaded", function () {
     toggle.classList.toggle("playing", on);
   }
   if (bgm && toggle) {
+    bgm.volume = 0.35;   // 預設小聲一點，賓客在公共場所打開才不會尷尬
     bgm.addEventListener("error", function () { toggle.hidden = true; });   // 沒有音樂檔就不顯示按鈕
     if (openBtn) {
       openBtn.addEventListener("click", function () {
@@ -638,6 +639,32 @@ document.addEventListener("DOMContentLoaded", function () {
         bgm.play().then(function () { setPlaying(true); }).catch(function () { setPlaying(false); });
       });
     }
+    // 離開頁面（切到別的 App、鎖螢幕、切換分頁、關閉）就暫停音樂，回來時自動接著播
+    let resumeAfterReturn = false;
+
+    function pauseForLeave() {
+      if (!bgm.paused) resumeAfterReturn = true;
+      bgm.pause();
+      setPlaying(false);
+    }
+    function resumeOnReturn() {
+      if (!resumeAfterReturn) return;
+      resumeAfterReturn = false;
+      bgm.play().then(function () { setPlaying(true); }).catch(function () {});
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) pauseForLeave(); else resumeOnReturn();
+    });
+    window.addEventListener("pagehide", pauseForLeave);
+    window.addEventListener("pageshow", function (e) { if (e.persisted) resumeOnReturn(); });
+    document.addEventListener("freeze", pauseForLeave);
+
+    // 保險：有些瀏覽器（含 LINE）不會可靠地發出事件，改用定時檢查
+    setInterval(function () {
+      if (document.visibilityState === "hidden" && !bgm.paused) pauseForLeave();
+    }, 500);
+
     toggle.addEventListener("click", function () {
       if (bgm.paused) {
         bgm.play().then(function () { setPlaying(true); }).catch(function () {});
@@ -647,18 +674,35 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // 偵測 LINE 內建瀏覽器：無法下載檔案，提示賓客改用預設瀏覽器
+  const lineHint = document.getElementById("lineHint");
+  if (lineHint && /Line\//i.test(navigator.userAgent)) lineHint.hidden = false;
+
   const calBtn = document.getElementById("addCalendar");
   if (calBtn) {
+    const d = calBtn.dataset;
+    // 台灣時間 (+08:00) 轉成 UTC，格式 20261130T033000Z，各種行事曆都能正確讀取
+    const toUtc = function (s) {
+      return new Date(s + ":00+08:00").toISOString().replace(/[-:]|\.\d{3}/g, "");
+    };
+
+    // 備案：Google 日曆連結（LINE 內建瀏覽器無法下載檔案時使用）
+    const gcal = document.getElementById("addGoogleCalendar");
+    if (gcal) {
+      gcal.href = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+        "&text=" + encodeURIComponent(d.title) +
+        "&dates=" + toUtc(d.start) + "/" + toUtc(d.end) +
+        "&location=" + encodeURIComponent(d.location);
+    }
+
     calBtn.addEventListener("click", function () {
-      const d = calBtn.dataset;
-      const fmt = function (s) { return s.replace(/[-:]/g, "") + "00"; };
       const ics = [
         "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Wedding Invitation//ZH",
         "BEGIN:VEVENT",
-        "UID:wedding-" + fmt(d.start) + "@invitation",
+        "UID:wedding-" + toUtc(d.start) + "@invitation",
         "DTSTAMP:" + new Date().toISOString().replace(/[-:]|\.\d{3}/g, ""),
-        "DTSTART;TZID=Asia/Taipei:" + fmt(d.start),
-        "DTEND;TZID=Asia/Taipei:" + fmt(d.end),
+        "DTSTART:" + toUtc(d.start),
+        "DTEND:" + toUtc(d.end),
         "SUMMARY:" + d.title,
         "LOCATION:" + d.location,
         "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY", "DESCRIPTION:明天是婚禮喜宴", "END:VALARM",
@@ -683,7 +727,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const shareMessage = document.getElementById("shareMessage");
 
   // 取得目前喜帖網址
-  const invitationUrl = window.location.href;
+  // 固定乾淨網址，並加上 openExternalBrowser=1：在 LINE 點開時會自動改用手機預設瀏覽器
+  const invitationUrl = window.location.origin + window.location.pathname + "?openExternalBrowser=1";
 
   // 分享喜帖
   if (shareButton) {
@@ -768,4 +813,25 @@ document.addEventListener("DOMContentLoaded", function () {
     copyButton.addEventListener("click", copyInvitationUrl);
   }
 
+});
+
+/* =================================
+   10. 信封：翻蓋打開、照片升起
+================================= */
+document.addEventListener("DOMContentLoaded", function () {
+  const scene = document.querySelector(".envelope-scene");
+  if (!scene) return;
+
+  scene.classList.add("env-ready");   // 有 JS 才進入「先隱藏、再動畫」的狀態
+
+  if (!("IntersectionObserver" in window)) {
+    scene.classList.add("is-in");
+    return;
+  }
+  const io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { scene.classList.add("is-in"); io.disconnect(); }
+    });
+  }, { threshold: 0.35 });
+  io.observe(scene);
 });

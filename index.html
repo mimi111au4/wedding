@@ -20,7 +20,7 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
 
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=5">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,6 +97,8 @@
 
     <!-- 信封底部 -->
     <div class="envelope-back"></div>
+    <!-- 信封翻蓋（打開狀態） -->
+    <div class="envelope-flap" aria-hidden="true"></div>
 
     <!-- 新人照片 -->
     <div class="couple-photo-layout">
@@ -242,8 +244,10 @@
       data-start="2026-11-30T11:30"
       data-end="2026-11-30T14:00"
       data-location="玄饌海鮮宴會館 臺南市安平區金城里城平路1號">加入行事曆</button>
+    <a class="map-link" id="addGoogleCalendar" target="_blank" rel="noopener">Google 日曆</a>
 
       </div>
+    <p class="line-hint" id="lineHint" hidden>你正在使用 LINE 內建瀏覽器，若按鈕沒有反應，請點右上角「⋯」，選擇「用預設瀏覽器開啟」後再試一次。</p>
    
 
   </section>
@@ -540,11 +544,7 @@
 
         <label for="declineNote">想對新人說的話（選填）</label>
 
-        <textarea
-          id="declineNote"
-          name="note"
-          placeholder="留下你的祝福吧！">
-        </textarea>
+        <textarea id="declineNote" name="note" placeholder="留下你的祝福吧！"></textarea>
 
         <button type="submit">送出回覆</button>
 
@@ -604,8 +604,7 @@
     // 把 Google Apps Script 網頁應用程式網址貼在這裡（教學見 rsvp-google-apps-script.gs）
     window.RSVP_ENDPOINT = window.RSVP_ENDPOINT || "https://script.google.com/macros/s/AKfycbzMvIbWAU0HM2Q_AloJyLVtobV0wF-T8HdSefYDiqYGesw51LFH3XNDn_uurUzrDwPt/exec";
   </script>
-  <script src="./script.js"></script>
+  <script src="./script.js?v=5"></script>
 
 </body>
 </html>
-<a href="https://breakingcopyright.com/song/north-wind-kanchan-thanvi-love-you-like-before">Love You Like Before</a> by North Wind & Kanchan Thanvi | Free To Use YouTube license | <a href="youtube-free">License</a>
