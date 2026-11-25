@@ -1,0 +1,238 @@
+/* =========================================================
+   style-v2.css｜視覺改版（疊加在 style.css 之後載入）
+   酒紅 × 米白 × 古金，玫瑰＋滿天星裝飾
+========================================================= */
+
+/* ---------- 區塊底色節奏 ---------- */
+body{background:#f6efe4}
+.couple-photos-section{background:linear-gradient(#f3e8d8,#f6efe4)}
+.invite-section{background:#fbf7f0}
+.wedding-details{background:linear-gradient(#f3e8d8,#f8f1e6)}
+.album-section{background:linear-gradient(#f8f1e6,#efe2d0)}
+.rsvp-section{background:#fbf7f0}
+.share-section{background:linear-gradient(#f3e8d8,#efe2d0)}
+
+/* ---------- 標題裝飾線：線＋小花＋線 ---------- */
+.couple-heading-line{display:block;width:150px;height:22px;margin:16px auto !important;border:0 !important;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 22'%3E%3Cpath d='M4 11h52M94 11h52' stroke='%23b39463'/%3E%3Cg transform='translate(75 11)'%3E%3Ccircle r='5' fill='%23873e3d'/%3E%3Ccircle r='2.6' fill='%23c0675d'/%3E%3Ccircle cx='-10' r='2' fill='%23b39463'/%3E%3Ccircle cx='10' r='2' fill='%23b39463'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat !important}
+.details-heading h2::after,.album-heading h2::after,.rsvp-heading h2::after,.share-section h2::after,.countdown-heading::after{
+  content:"";display:block;width:150px;height:22px;margin:14px auto 0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 22'%3E%3Cpath d='M4 11h52M94 11h52' stroke='%23b39463'/%3E%3Cg transform='translate(75 11)'%3E%3Ccircle r='5' fill='%23873e3d'/%3E%3Ccircle r='2.6' fill='%23c0675d'/%3E%3Ccircle cx='-10' r='2' fill='%23b39463'/%3E%3Ccircle cx='10' r='2' fill='%23b39463'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+
+/* 按鈕與卡片微調：統一酒紅＋古金 */
+.detail-card{box-shadow:0 14px 34px rgba(110,58,50,.12)}
+.rsvp-button.attend-button,.share-button{box-shadow:0 8px 20px rgba(135,62,61,.25)}
+
+
+/* =========================================================
+   首頁＝酒紅橫式信封（象牙白底，信封上印著封面文字）
+========================================================= */
+.hero{background:radial-gradient(ellipse at 50% 42%,#fffdf8 0%,#f7f0e5 58%,#ecdfca 100%);color:#873e3d}
+.hero-overlay{background:none}
+.hero::before{content:"";display:block;position:absolute;inset:14px;z-index:1;pointer-events:none;
+  border:1px solid rgba(179,148,99,.55);border-radius:4px;background:none;transform:none;
+  box-shadow:inset 0 0 0 5px rgba(247,240,229,1),inset 0 0 0 6px rgba(179,148,99,.28)}
+.hero::after{content:"囍";color:rgba(135,62,61,.09)}
+.hero-content{display:flex;flex-direction:column;align-items:center;animation:none}
+.home-orn{margin:0 auto 34px !important}
+.env{--w:min(90vw,350px);position:relative;display:block;width:var(--w);aspect-ratio:1/.74;margin:0 auto;padding:0;border:0;
+  background:none;cursor:pointer;perspective:900px;-webkit-tap-highlight-color:transparent;
+  font-family:"Noto Serif TC","Noto Serif CJK TC","Songti TC",serif;animation:envFloat 3.4s ease-in-out infinite}
+.env>span{position:absolute;display:block}
+.env-back{inset:0;background:linear-gradient(145deg,#A27A6D 0%,#94695D 50%,#7F574D 100%);border-radius:6px;box-shadow:0 22px 36px rgba(61,36,30,.28),0 4px 10px rgba(61,36,30,.18)}
+.env-letter{left:6%;right:6%;top:6%;height:88%;z-index:2;background:#fbf5ea;border:1px solid #d9c4a3;border-radius:3px;
+  display:flex !important;flex-direction:column;align-items:center;justify-content:center;gap:.7em;text-align:center;color:#873e3d;
+  font-size:calc(var(--w)*.055);transition:transform 1.1s cubic-bezier(.3,.7,.2,1) .55s}
+.env-letter i{font-style:normal;font-size:1.3em;letter-spacing:.3em;text-indent:.3em}
+.env-letter b{font-weight:400;font-size:.8em;letter-spacing:.2em;color:#7a5f58}
+.env-letter u{text-decoration:none;font-size:.75em;letter-spacing:.3em;color:#a58a76}
+.env-letter em{font-style:normal;font-size:1.6em;color:#b39463}
+.env-front{inset:0;z-index:3;overflow:hidden;border-radius:6px;clip-path:polygon(0 0,50% 38%,100% 0,100% 100%,0 100%);
+  background:linear-gradient(160deg,#8f3636,#762929)}
+.env-front::before{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);animation:envShine 4.5s ease-in-out 1s infinite}
+.env-text{left:0;right:0;top:49%;bottom:4%;z-index:3;display:flex !important;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.env-text>span{display:block}
+.env-text .t1{color:#f3e0c2;font-size:calc(var(--w)*.078);letter-spacing:.14em;text-indent:.14em;line-height:1.25}
+.env-text .t2{margin-top:.3em;color:#d9bb7e;font-family:"DM Serif Display","Noto Serif TC","Noto Serif CJK TC",serif;font-size:calc(var(--w)*.032);letter-spacing:.28em;text-indent:.28em}
+.env-text .t-line{width:62%;height:1px;margin:calc(var(--w)*.02) 0;background:rgba(217,187,126,.7)}
+.env-text .t3{color:#fff6e6;font-size:calc(var(--w)*.056);letter-spacing:.1em;line-height:1.25}
+.env-text .t3 span{color:#d9bb7e}
+.env-text .t4{margin-top:calc(var(--w)*.018);color:#d9bb7e;font-size:calc(var(--w)*.032);letter-spacing:.25em;text-indent:.25em}
+.env-flap{inset:0;z-index:4;border-radius:6px;transform-origin:50% 0;clip-path:polygon(0 0,100% 0,50% 38%);
+  background:linear-gradient(#9c3d3a,#862f2f)}
+.env-seal{left:50%;top:38%;z-index:5;width:calc(var(--w)*.12);height:calc(var(--w)*.12);margin:calc(var(--w)*-.06) 0 0 calc(var(--w)*-.06);
+  border-radius:50%;background:radial-gradient(circle at 35% 30%,#f0d99a,#b8934f 72%);box-shadow:0 4px 10px rgba(0,0,0,.4);
+  color:#7a2b2b;font-size:calc(var(--w)*.058);line-height:calc(var(--w)*.12);text-align:center;font-weight:600;animation:sealPulse 1.8s ease-in-out infinite}
+.env-seal::before,.env-seal::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid rgba(184,147,79,.9);
+  animation:ripple 2.4s ease-out infinite}
+.env-seal::after{animation-delay:1.2s}
+.env-hint{margin-top:38px;color:#94695D;font-size:15px;letter-spacing:.35em;text-indent:.35em;animation:hintBlink 1.8s ease-in-out infinite}
+@keyframes envFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes envShine{0%,60%{left:-60%}100%{left:130%}}
+@keyframes sealPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes ripple{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.7);opacity:0}}
+@keyframes hintBlink{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes flapOpen{0%{transform:rotateX(0);z-index:4}49%{z-index:4}50%{transform:rotateX(90deg);z-index:1}100%{transform:rotateX(180deg);z-index:1}}
+@keyframes sealGone{to{transform:scale(1.8);opacity:0}}
+.env.is-open{animation:none}
+.env.is-open .env-flap{animation:flapOpen .8s ease forwards}
+.env.is-open .env-seal{animation:sealGone .35s ease forwards}
+.env.is-open .env-seal::before,.env.is-open .env-seal::after{display:none}
+.env.is-open .env-front::before{display:none}
+.env.is-open .env-letter{transform:translateY(-62%) scale(1.03)}
+.env.is-open+.env-hint{opacity:0;animation:none;transition:opacity .3s}
+#home{transition:opacity .7s ease,transform .7s ease}
+#home.is-closing{opacity:0;transform:scale(1.03)}
+
+/* =========================================================
+   滑動揭示（捲動到才淡入、位移）
+========================================================= */
+.v2-rev{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+.v2-rev.v2-in{opacity:1;transform:none}
+
+/* =========================================================
+   小互動：花瓣飄落
+========================================================= */
+.petal{position:fixed;z-index:9999;pointer-events:none;width:11px;height:15px;border-radius:50% 0 50% 50%;
+  animation:petalFly var(--t,1.8s) cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes petalFly{0%{opacity:1;transform:translate(0,0) rotate(0) scale(.6)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1)}}
+.footer-xi,.invite-parents i{cursor:pointer;-webkit-tap-highlight-color:transparent}
+@media (prefers-reduced-motion:reduce){
+  .env,.env-seal,.env-hint{animation:none}
+  .v2-rev{opacity:1;transform:none;transition:none}
+  .petal{display:none}
+}
+
+/* 倒數數字跳動 */
+.countdown-number.tick{animation:tickPop .5s ease}
+@keyframes tickPop{0%{transform:translateY(-8px);opacity:.3}100%{transform:none;opacity:1}}
+.v2-line{display:block}
+@media (prefers-reduced-motion:reduce){.env-seal::before,.env-seal::after,.env-front::before{display:none}.countdown-number.tick{animation:none}}
+
+/* =========================================================
+   新互動：彩蛋、倒數歸零、相本愛心
+========================================================= */
+.heart{position:fixed;z-index:10000;pointer-events:none;color:#c0575a;line-height:1;
+  animation:heartUp var(--t,1.5s) ease-out forwards}
+@keyframes heartUp{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(var(--rot))}}
+.petal.fall{top:-24px;animation:petalFall var(--t,4s) linear forwards}
+@keyframes petalFall{0%{opacity:0;transform:translate(0,0) rotate(0)}8%{opacity:1}
+  100%{opacity:.9;transform:translate(var(--dx),calc(100vh + 40px)) rotate(var(--rot))}}
+.egg{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:rgba(40,22,20,.55);animation:eggIn .35s ease both}
+.egg-card{width:min(320px,100%);padding:34px 24px 30px;border-radius:14px;background:#fbf5ea;text-align:center;color:#873e3d;
+  border:1px solid #d9c4a3;box-shadow:0 20px 50px rgba(0,0,0,.35);animation:eggPop .5s cubic-bezier(.3,1.4,.5,1) both;
+  font-family:"Noto Serif TC","Noto Serif CJK TC",serif}
+.egg-card em{display:block;font-style:normal;font-size:46px;line-height:1;color:#b39463}
+.egg-card p{margin:14px 0 8px;font-size:20px;letter-spacing:.2em}
+.egg-card span{display:block;font-size:14px;line-height:1.9;color:#7a5f58}
+@keyframes eggIn{from{opacity:0}to{opacity:1}}
+@keyframes eggPop{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+.countdown-note{margin-top:22px;text-align:center;color:#873e3d;font-size:16px;letter-spacing:.2em}
+.countdown-section.is-day .countdown-number{color:#873e3d;animation:dayGlow 1.8s ease-in-out infinite}
+@keyframes dayGlow{0%,100%{text-shadow:0 0 0 rgba(179,148,99,0)}50%{text-shadow:0 0 18px rgba(179,148,99,.8)}}
+@media (prefers-reduced-motion:reduce){.heart,.petal.fall{display:none}.countdown-section.is-day .countdown-number{animation:none}}
+
+
+/* =========================================================
+   v5：首頁信封立體化（對齊內頁信封：折片明暗、翻蓋金邊與投影、紙紋、落地陰影、滑鼠／手指傾斜）
+========================================================= */
+.env{
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:transform .28s ease-out,scale .15s ease;
+  will-change:transform;
+}
+.env:not(.is-open):active{scale:.975}
+.env.is-open{--rx:0deg !important;--ry:0deg !important}
+@keyframes envFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+
+/* 落地陰影（隨傾斜左右偏移） */
+.env::after{content:"";position:absolute;left:9%;right:9%;bottom:-26px;height:24px;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(61,36,30,.32),transparent 70%);filter:blur(5px);
+  transform:translateX(var(--sx,0px));transition:transform .28s ease-out}
+
+/* 信封內側：更深的暗部＋金色細邊 */
+.env-back{border:1px solid rgba(179,148,99,.55);
+  box-shadow:0 22px 36px rgba(61,36,30,.28),0 4px 10px rgba(61,36,30,.18),inset 0 16px 24px rgba(30,12,10,.35),inset 0 1px 2px rgba(255,255,255,.14)}
+
+/* 前片：紙紋 */
+.env-front{
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(145deg,#94695D 0%,#86594F 55%,#704840 100%);
+}
+/* 左右折片：左亮右暗 */
+.env-fold-l,.env-fold-r{inset:0;z-index:3;pointer-events:none;border-radius:6px}
+.env-fold-l{clip-path:polygon(0 0,50% 38%,0 100%);background:linear-gradient(90deg,rgba(255,226,200,.18),transparent 78%)}
+.env-fold-r{clip-path:polygon(100% 0,50% 38%,100% 100%);background:linear-gradient(270deg,rgba(40,20,15,.22),transparent 80%)}
+
+/* 翻蓋：金邊＋內層漸層＋對前片的投影 */
+.env-flap{clip-path:none;background:none;border-radius:0;pointer-events:none;
+  filter:drop-shadow(0 5px 5px rgba(30,6,6,.5))}
+.env-flap i{position:absolute;inset:0;display:block;clip-path:polygon(0 0,100% 0,50% 38%);background:rgba(179,148,99,.75)}
+.env-flap i::after{content:"";position:absolute;inset:0;clip-path:polygon(.45% 0,99.55% 0,50% 37.5%);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(145deg,#A27A6D 0%,#94695D 55%,#86594F 100%)}
+.env.is-open .env-flap{filter:none}
+
+/* 蠟封：更立體 */
+.env-seal{box-shadow:0 6px 10px rgba(35,19,13,.4),inset 0 1px 2px rgba(255,255,255,.65),inset 0 -3px 5px rgba(91,57,20,.3);
+  border:1px solid #e4c98d}
+.env-seal::before,.env-seal::after{border-width:1px !important;border-color:rgba(179,148,99,.6) !important}
+
+/* =========================================================
+   v5：分享區縮小；手機版「分享／複製」左右並排
+========================================================= */
+.share-section{padding:44px 20px 52px}
+.share-section h2{font-size:22px;margin-bottom:6px}
+.share-section h2::after{width:110px;height:16px;margin-top:8px}
+.share-description{font-size:13px;margin-bottom:16px}
+.share-actions{flex-direction:row;flex-wrap:nowrap;gap:10px}
+.share-button,.copy-button{min-width:0;width:auto;padding:9px 18px;font-size:13px}
+.share-button span,.copy-button span{margin-right:5px}
+.share-message{min-height:18px;margin-top:12px;font-size:12px}
+@media (max-width:480px){
+  .share-section{padding:38px 16px 44px}
+  .share-actions{flex-direction:row;flex-wrap:nowrap;gap:8px}
+  .share-button,.copy-button{flex:0 1 auto;width:auto;min-width:108px;padding:9px 14px;font-size:12.5px}
+}
+
+/* =========================================================
+   v5：結尾「囍」提示鈕（半透明，連按三下有彩蛋）
+========================================================= */
+.footer-xi{transition:transform .2s ease}
+.footer-xi.xi-bump{animation:xiBump .35s ease}
+@keyframes xiBump{0%{transform:scale(1)}40%{transform:scale(1.28);text-shadow:0 0 22px rgba(217,187,126,.9)}100%{transform:scale(1)}}
+.xi-hint{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:6px 14px;border-radius:999px;
+  border:1px solid rgba(217,187,126,.3);background:rgba(255,255,255,.04);color:rgba(243,230,211,.5);
+  font:inherit;font-size:12px;letter-spacing:.22em;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  animation:xiBreath 3s ease-in-out infinite;transition:border-color .3s,color .3s,background .3s}
+.xi-hint:active{background:rgba(217,187,126,.12)}
+.xi-hint[data-n="3"]{color:rgba(243,230,211,.9);border-color:rgba(217,187,126,.8)}
+.xi-dots{display:inline-flex;gap:5px}
+.xi-dots i{width:5px;height:5px;border-radius:50%;border:1px solid rgba(217,187,126,.55);transition:background .25s,transform .25s}
+.xi-dots i.on{background:#d9bb7e;transform:scale(1.25)}
+@keyframes xiBreath{0%,100%{opacity:.5}50%{opacity:.95}}
+
+/* =========================================================
+   v5：更多小互動
+========================================================= */
+/* 內頁信封：點照片／封泥 彈一下並飄愛心 */
+.couple-photo,.envelope-seal{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.couple-photo.pop{animation:photoPop .5s cubic-bezier(.3,1.6,.5,1)}
+.envelope-seal.pop{animation:sealPop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes photoPop{0%{scale:1}40%{scale:1.07}100%{scale:1}}
+@keyframes sealPop{0%{scale:1}40%{scale:1.28}100%{scale:1}}
+/* 頁面最上方的閱讀進度金線 */
+.scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none;opacity:0;
+  transform-origin:0 50%;transform:scaleX(var(--p,0));transition:opacity .3s;
+  background:rgba(165,138,118,.7)}
+.scroll-progress.on{opacity:.75}
+@media (prefers-reduced-motion:reduce){
+  .env{transition:none}.env::after{transition:none}
+  .xi-hint,.footer-xi.xi-bump,.couple-photo.pop,.envelope-seal.pop{animation:none}
+}

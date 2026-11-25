@@ -14,7 +14,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (openButton.disabled) return;
 
       openButton.disabled = true;
-      heroSection.classList.add("is-closing");
+      openButton.classList.add("is-open");          // 拆信封動畫（約 1.5 秒）
+      if (window.v2Petals) {
+        const r = openButton.getBoundingClientRect();
+        window.v2Petals(r.left + r.width / 2, r.top + r.height / 2, 22);
+      }
+      setTimeout(function () { heroSection.classList.add("is-closing"); }, 1500);
 
       setTimeout(function () {
 
@@ -30,9 +35,16 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         });
 
-      }, 600);
+      }, 2200);
 
     });
+  }
+
+
+  // 沒有「開啟喜帖」按鈕時：封面與內容連續呈現，直接顯示內容
+  if (!openButton && heroSection && invitationContent) {
+    invitationContent.style.display = "block";
+    requestAnimationFrame(function () { invitationContent.classList.add("active"); });
   }
 
 
@@ -632,6 +644,15 @@ document.addEventListener("DOMContentLoaded", function () {
   if (bgm && toggle) {
     bgm.volume = 0.35;   // 預設小聲一點，賓客在公共場所打開才不會尷尬
     bgm.addEventListener("error", function () { toggle.hidden = true; });   // 沒有音樂檔就不顯示按鈕
+    if (!openBtn) {
+      // 沒有開啟按鈕：賓客第一次點擊／觸碰畫面時開始播放（瀏覽器規定需要使用者操作）
+      toggle.hidden = false;
+      const startOnGesture = function () {
+        bgm.play().then(function () { setPlaying(true); }).catch(function () { setPlaying(false); });
+        ["click", "touchend", "keydown"].forEach(function (t) { document.removeEventListener(t, startOnGesture); });
+      };
+      ["click", "touchend", "keydown"].forEach(function (t) { document.addEventListener(t, startOnGesture); });
+    }
     if (openBtn) {
       openBtn.addEventListener("click", function () {
         toggle.hidden = false;
@@ -835,3 +856,316 @@ document.addEventListener("DOMContentLoaded", function () {
   }, { threshold: 0.35 });
   io.observe(scene);
 });
+
+
+/* =========================================================
+   視覺改版互動：花瓣、滑動揭示
+========================================================= */
+(function () {
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const colors = ["#8c3a3a", "#a84d4d", "#c0675d", "#e4cfb4", "#f3e6d3", "#d9bb7e"];
+
+  // 花瓣從 (x, y) 往四周飄散
+  window.v2Petals = function (x, y, n) {
+    if (reduce) return;
+    n = n || 14;
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement("span");
+      p.className = "petal";
+      const ang = Math.random() * Math.PI * 2, dist = 70 + Math.random() * 130;
+      p.style.left = x + "px";
+      p.style.top = y + "px";
+      p.style.background = colors[i % colors.length];
+      p.style.setProperty("--dx", Math.cos(ang) * dist + "px");
+      p.style.setProperty("--dy", Math.sin(ang) * dist * 0.7 + 60 + Math.random() * 80 + "px");
+      p.style.setProperty("--rot", (Math.random() * 540 - 270) + "deg");
+      p.style.setProperty("--t", (1.4 + Math.random() * 0.9) + "s");
+      document.body.appendChild(p);
+      setTimeout(function () { p.remove(); }, 2600);
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // 點囍字、點「欣然赴約」撒花
+    document.addEventListener("click", function (e) {
+      const t = e.target.closest(".footer-xi, .invite-parents i, .xi-hint, #attendButton");
+      if (t) window.v2Petals(e.clientX, e.clientY, 16);
+    });
+
+    // 滑動揭示：捲動到才依序淡入
+    const sel = ".couple-photo-heading,.envelope-scene,.invite-parents,.details-heading,.detail-card,.schedule-actions,.countdown-heading,.countdown,.album-heading,.rsvp-heading,.rsvp-choice,.share-section h2,.share-description,.share-actions";
+    const items = Array.prototype.slice.call(document.querySelectorAll(sel));
+
+    // 邀請文：一行一行浮現
+    const lineEls = [];
+    const it = document.querySelector(".invite-text");
+    if (it) {
+      const lines = it.innerHTML.split(/<br\s*\/?>/i).map(function (t) { return t.trim(); }).filter(Boolean);
+      it.innerHTML = lines.map(function (t) { return '<span class="v2-line">' + t + "</span>"; }).join("");
+      it.querySelectorAll(".v2-line").forEach(function (el) { lineEls.push(el); });
+    }
+
+    // 倒數：秒、分數字變動時跳一下
+    ["seconds", "minutes", "hours"].forEach(function (id) {
+      const el = document.getElementById(id);
+      if (!el || reduce) return;
+      let last = el.textContent;
+      new MutationObserver(function () {
+        if (el.textContent === last) return;
+        last = el.textContent;
+        el.classList.remove("tick"); void el.offsetWidth; el.classList.add("tick");
+      }).observe(el, { childList: true, characterData: true, subtree: true });
+    });
+
+    if (!("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("v2-in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
+    items.forEach(function (el, i) {
+      el.classList.add("v2-rev");
+      el.style.transitionDelay = (i % 3) * 0.12 + "s";
+      io.observe(el);
+    });
+    lineEls.forEach(function (el, i) {
+      el.classList.add("v2-rev");
+      el.style.transitionDelay = i * 0.3 + "s";
+      io.observe(el);
+    });
+  });
+})();
+
+
+/* =========================================================
+   新互動：彩蛋（連點囍字三次）、倒數歸零、相本愛心
+========================================================= */
+(function () {
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---- 愛心從 (x, y) 飄起 ----
+  function hearts(x, y, n) {
+    if (reduce) return;
+    for (let i = 0; i < n; i++) {
+      const h = document.createElement("span");
+      h.className = "heart";
+      h.textContent = "♥";
+      h.style.left = x + (Math.random() * 30 - 15) + "px";
+      h.style.top = y + "px";
+      h.style.fontSize = 16 + Math.random() * 14 + "px";
+      h.style.color = ["#c0575a", "#d9787a", "#a84d4d", "#e8a0a0"][i % 4];
+      h.style.setProperty("--dx", Math.random() * 90 - 45 + "px");
+      h.style.setProperty("--dy", -(90 + Math.random() * 110) + "px");
+      h.style.setProperty("--rot", Math.random() * 60 - 30 + "deg");
+      h.style.setProperty("--t", 1.2 + Math.random() * 0.8 + "s");
+      document.body.appendChild(h);
+      setTimeout(function () { h.remove(); }, 2300);
+    }
+  }
+
+  window.v2Hearts = hearts;
+
+  // ---- 花瓣雨（從畫面上方落下）----
+  function rain(times) {
+    if (reduce || !window.v2Petals) return;
+    const colors = ["#8c3a3a", "#a84d4d", "#c0675d", "#e4cfb4", "#d9bb7e"];
+    let k = 0;
+    const timer = setInterval(function () {
+      for (let i = 0; i < 6; i++) {
+        const p = document.createElement("span");
+        p.className = "petal fall";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.background = colors[(k + i) % colors.length];
+        p.style.setProperty("--dx", Math.random() * 120 - 60 + "px");
+        p.style.setProperty("--rot", Math.random() * 720 - 360 + "deg");
+        p.style.setProperty("--t", 3.5 + Math.random() * 2 + "s");
+        document.body.appendChild(p);
+        setTimeout(function () { p.remove(); }, 6000);
+      }
+      if (++k >= times) clearInterval(timer);
+    }, 260);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    // ---- 相本：點照片飄愛心（滑動翻頁時不觸發）----
+    let downX = 0, downY = 0;
+    document.addEventListener("pointerdown", function (e) { downX = e.clientX; downY = e.clientY; }, true);
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest || !e.target.closest("#book img.photo")) return;
+      if (Math.abs(e.clientX - downX) > 10 || Math.abs(e.clientY - downY) > 10) return;
+      hearts(e.clientX, e.clientY, 7);
+    }, true);
+    // 放大檢視時：連點兩下送一大串愛心
+    const vImg = document.getElementById("viewerImage");
+    if (vImg) vImg.addEventListener("dblclick", function (e) { hearts(e.clientX, e.clientY, 14); });
+
+    // ---- 彩蛋：連點囍字三次（含提示鈕進度）----
+    let taps = [];
+    const xiBtn = document.getElementById("xiHint");
+    const xiTxt = xiBtn && xiBtn.querySelector(".xi-hint-text");
+    const xiDots = xiBtn ? xiBtn.querySelectorAll(".xi-dots i") : [];
+    const xiEl = document.querySelector(".footer-xi");
+    const xiDefault = xiTxt ? xiTxt.textContent : "";
+    let xiTimer = 0;
+    function xiUpdate(n) {
+      if (!xiBtn) return;
+      xiBtn.setAttribute("data-n", n);
+      xiDots.forEach(function (d, i) { d.classList.toggle("on", i < n); });
+      xiTxt.textContent = n === 1 ? "再按 2 下" : n === 2 ? "再 1 下就好！" : n === 3 ? "彩蛋解鎖 ♡" : xiDefault;
+      clearTimeout(xiTimer);
+      if (n > 0) xiTimer = setTimeout(function () { xiUpdate(0); }, n === 3 ? 2600 : 1300);
+    }
+    document.addEventListener("click", function (e) {
+      if (!e.target.closest || !e.target.closest(".footer-xi, .invite-parents i, .xi-hint")) return;
+      const now = Date.now();
+      taps = taps.filter(function (t) { return now - t < 1200; });
+      taps.push(now);
+      if (xiEl && e.target.closest(".footer-xi, .xi-hint")) {
+        xiEl.classList.remove("xi-bump"); void xiEl.offsetWidth; xiEl.classList.add("xi-bump");
+        xiUpdate(Math.min(taps.length, 3));
+      }
+      if (navigator.vibrate) navigator.vibrate(taps.length >= 3 ? [30, 40, 60] : 12);
+      if (taps.length < 3) return;
+      taps = [];
+      if (document.querySelector(".egg")) return;
+      const d = document.createElement("div");
+      d.className = "egg";
+      d.innerHTML = '<div class="egg-card"><em>囍</em><p>被你發現了！</p><span>謝謝你把喜帖看到這裡<br>願你也被滿滿的幸福包圍 ♡</span></div>';
+      d.addEventListener("click", function () { d.remove(); });
+      document.body.appendChild(d);
+      if (window.v2Petals) window.v2Petals(window.innerWidth / 2, window.innerHeight / 2, 30);
+      rain(10);
+      setTimeout(function () { d.remove(); }, 5000);
+    });
+
+    // ---- 倒數歸零：婚禮當天變成慶祝畫面 ----
+    const section = document.getElementById("countdown");
+    const heading = section && section.querySelector(".countdown-heading");
+    if (section && heading) {
+      const target = new Date(2026, 10, 30, 12, 0, 0).getTime();
+      let state = "";
+      let rained = false;
+      const note = document.createElement("p");
+      note.className = "countdown-note";
+      section.appendChild(note);
+
+      const io = "IntersectionObserver" in window ? new IntersectionObserver(function (en) {
+        if (en[0].isIntersecting && state === "day" && !rained) { rained = true; rain(16); }
+      }, { threshold: 0.3 }) : null;
+      if (io) io.observe(section);
+
+      function check() {
+        const now = Date.now();
+        const st = now < target ? "before" : (now < target + 864e5 ? "day" : "after");
+        if (st === state) return;
+        state = st;
+        if (st === "before") return;
+        section.classList.add("is-day");
+        if (st === "day") {
+          heading.innerHTML = "就是今天<br><span>Today Is The Day</span>";
+          note.textContent = "今天，我們結婚了 ♡ 期待與你相見";
+        } else {
+          heading.innerHTML = "感謝你的祝福<br><span>Thank You For Celebrating</span>";
+          note.textContent = "婚禮圓滿完成，謝謝你一路的陪伴 ♡";
+        }
+      }
+      check();
+      setInterval(check, 1000);
+    }
+  });
+})();
+
+
+/* =========================================================
+   v5 互動：首頁信封 3D 傾斜、內頁信封點擊、分享愛心、閱讀進度線
+========================================================= */
+(function () {
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+    // ---- 首頁信封：滑鼠／手指／手機傾斜時，信封跟著轉動 ----
+    const env = document.getElementById("openInvitation");
+    const hero = document.getElementById("home");
+    if (env && hero && !reduce) {
+      let raf = 0, lastPtr = 0;
+      const setTilt = function (nx, ny) {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+          env.style.setProperty("--rx", (-ny * 9).toFixed(2) + "deg");
+          env.style.setProperty("--ry", (nx * 12).toFixed(2) + "deg");
+          env.style.setProperty("--sx", (-nx * 14).toFixed(1) + "px");
+        });
+      };
+      const fromPointer = function (e) {
+        if (env.classList.contains("is-open")) return;
+        lastPtr = Date.now();
+        const r = hero.getBoundingClientRect();
+        setTilt(clamp(((e.clientX - r.left) / r.width - 0.5) * 2, -1, 1),
+                clamp(((e.clientY - r.top) / r.height - 0.5) * 2, -1, 1));
+      };
+      hero.addEventListener("pointermove", fromPointer);
+      hero.addEventListener("pointerdown", fromPointer);
+      hero.addEventListener("pointerleave", function () { setTilt(0, 0); });
+      hero.addEventListener("pointerup", function (e) {
+        if (e.pointerType === "touch") setTimeout(function () { setTilt(0, 0); }, 500);
+      });
+      // 手機傾斜感應（iOS 需授權的就略過，不跳出詢問）
+      if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== "function") {
+        window.addEventListener("deviceorientation", function (e) {
+          if (e.gamma == null || e.beta == null) return;
+          if (env.classList.contains("is-open") || Date.now() - lastPtr < 1500) return;
+          setTilt(clamp(e.gamma / 25, -1, 1), clamp((e.beta - 45) / 25, -1, 1));
+        });
+      }
+    }
+
+    // ---- 內頁信封：點照片或封泥 → 彈一下＋飄愛心 ----
+    const scene = document.querySelector(".envelope-scene");
+    if (scene) {
+      scene.addEventListener("click", function (e) {
+        const photo = e.target.closest(".couple-photo");
+        const seal = e.target.closest(".envelope-seal");
+        const t = photo || seal;
+        if (!t) return;
+        t.classList.remove("pop"); void t.offsetWidth; t.classList.add("pop");
+        if (window.v2Hearts) window.v2Hearts(e.clientX, e.clientY, photo ? 8 : 12);
+        if (navigator.vibrate) navigator.vibrate(10);
+      });
+    }
+
+    // ---- 分享／複製：成功時從按鈕飄出愛心 ----
+    ["shareInvitation", "copyInvitation"].forEach(function (id) {
+      const b = document.getElementById(id);
+      if (!b) return;
+      b.addEventListener("click", function () {
+        const r = b.getBoundingClientRect();
+        if (window.v2Hearts) window.v2Hearts(r.left + r.width / 2, r.top + 6, 6);
+      });
+    });
+
+    // ---- 頁面頂端閱讀進度金線（只在喜帖內頁出現）----
+    const content = document.getElementById("invitationContent");
+    if (content) {
+      const bar = document.createElement("div");
+      bar.className = "scroll-progress";
+      bar.setAttribute("aria-hidden", "true");
+      document.body.appendChild(bar);
+      let ticking = false;
+      const update = function () {
+        ticking = false;
+        const shown = getComputedStyle(content).display !== "none";
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        if (!shown || max <= 0) { bar.classList.remove("on"); return; }
+        bar.style.setProperty("--p", clamp(window.scrollY / max, 0, 1).toFixed(4));
+        bar.classList.add("on");
+      };
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      window.addEventListener("resize", update);
+    }
+  });
+})();
